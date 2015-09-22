@@ -76,14 +76,18 @@ class UploadAction extends SerializeResourceAction
      */
     protected function data(JsonApiRequest $request, Document $document)
     {
-        // should be loaded from config
-        $uploadDir = '/var/www/_futurebox/upload/';
+        // should be loaded from config ... upload folder relative to the flarum base path
+        $uploadDir = '/upload/';
 
         // list of allowed filetypes (null if all are allowed)
         $allowedTypes = null;
 
         // list of blocked filetypes (null if none are blocked)
         $blockedTypes = ['php', 'js', 'html', 'doc'];
+
+        // end of config
+
+        $uploadDir = getcwd() . $uploadDir;
 
         $file = $request->http->getUploadedFiles()['file'];
         $id = $request->get('id');
@@ -100,21 +104,21 @@ class UploadAction extends SerializeResourceAction
         // unique id is generated then folder structure is build based on it
         // upload/first_2_letters/second_2_letters/last_2_letters
         // to avoid the need to save in database to preserve filename
+        // add _ to begining to make sure its valid folder name
         $uid = uniqid();
-        $uid = array($uid[0].$uid[1], $uid[2].$uid[3], $uid[11].$uid[12]);
+        $uid = array("_".$uid[0].$uid[1], "_".$uid[2].$uid[3], "_".$uid[11].$uid[12]);
         $currentPath = $uploadDir;
         foreach ($uid as $dir) {
             $currentPath .= "$dir/";
             if (!is_dir($currentPath)) {
-                mkdir($currentPath);
-                chmod($currentPath, 775);
+                mkdir($currentPath, 0777, true);
             }
         }
 
         $file->moveTo($currentPath.$file->getClientFilename());
 
         $currentPath = str_replace($uploadDir, "", $currentPath);
-        $response  = "http://futurebox.tech/upload/".$currentPath.$file->getClientFilename();
+        $response  = "/upload/".$currentPath.$file->getClientFilename();
 
         // send output (must be updated)
         return $response;

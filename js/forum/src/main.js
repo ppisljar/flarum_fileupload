@@ -12,7 +12,9 @@ var success = function(response) {
     loading = false;
     if (!response.data) return;
 
-    var file = response.data.id;
+    // gets the current url and appends the file to it
+    // TODO: this is not good if flarum is installed in a subfolder
+    var file = location.protocol + '//' + location.host + response.data.id;
     var content = app.composer.component.content();
     content = content ? content : "";
     content += "\n\n" + file;
