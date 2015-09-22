@@ -1,0 +1,23 @@
+{
+    "name": "fileupload",
+    "title": "fileupload",
+    "description": "allows uploading files",
+    "keywords": [
+
+    ],
+    "version": "0.1.0",
+    "author": {
+        "name": "Peter Pisljar",
+        "email": "peter.pisljar@gmail.com",
+        "homepage": ""
+    },
+    "license": "MIT",
+    "require": {
+        "flarum": ">0.1.0-beta.2"
+    },
+    "icon": {
+        "name": "",
+        "backgroundColor": "",
+        "color": ""
+    }
+}

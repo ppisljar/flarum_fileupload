@@ -1,0 +1,69 @@
+import { extend, override } from 'flarum/extend';
+import app from 'flarum/app';
+
+import Composer from 'flarum/components/Composer';
+import ComposerBody from 'flarum/components/ComposerBody';
+import ComposerButton from 'flarum/components/ComposerButton';
+
+
+var loading = false;
+
+var success = function(response) {
+    if (!response.data) return;
+
+    var file = response.data.id;
+    var content = app.composer.component.content();
+    content = content ? content : "";
+    content += "\n\n" + file;
+
+    app.composer.component.editor.setValue(content);
+
+    console.log("success");
+};
+
+var failure = function(response) {
+    console.log("fail");
+};
+
+var upload = function() {
+    if (loading) return;
+
+    // Create a hidden HTML input element and click on it so the user can select
+    // an avatar file. Once they have, we will upload it via the API.
+    // const user = this.props.user;
+    const $input = $('<input type="file">');
+
+    $input.appendTo('body').hide().click().on('change', e => {
+        const data = new FormData();
+        data.append('file', $(e.target)[0].files[0]);
+
+        loading = true;
+        //m.redraw();
+
+        app.request({
+            method: 'POST',
+            url: app.forum.attribute('apiUrl') + '/upload',
+            serialize: raw => raw,
+            data
+        }).then(
+            success.bind(this),
+            failure.bind(this)
+        );
+    });
+};
+
+console.log("before start");
+
+extend(Composer.prototype, 'controlItems', function(oItems) {
+    console.log("running extend");
+
+    oItems.add('uploadFile', ComposerButton.component({
+        icon: 'upload',
+        title: app.trans('fileupload.upladnewfile'),
+        onclick: function() {
+            upload();
+        }
+    }));
+
+    return oItems;
+});
