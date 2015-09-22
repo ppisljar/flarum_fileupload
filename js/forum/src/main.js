@@ -9,6 +9,7 @@ import ComposerButton from 'flarum/components/ComposerButton';
 var loading = false;
 
 var success = function(response) {
+    loading = false;
     if (!response.data) return;
 
     var file = response.data.id;
@@ -17,12 +18,12 @@ var success = function(response) {
     content += "\n\n" + file;
 
     app.composer.component.editor.setValue(content);
-
-    console.log("success");
 };
 
 var failure = function(response) {
-    console.log("fail");
+    loading = false;
+
+    app.alertErrors([{detail: 'File was not uploaded. Please refresh the page and try again.'}]);
 };
 
 var upload = function() {
