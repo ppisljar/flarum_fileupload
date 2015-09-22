@@ -13,7 +13,9 @@ namespace fileupload\Api;
 use Flarum\Api\Actions\SerializeResourceAction;
 use Flarum\Api\JsonApiRequest;
 use Illuminate\Contracts\Bus\Dispatcher;
+use League\Flysystem\Exception;
 use Tobscure\JsonApi\Document;
+use RuntimeException;
 
 class UploadAction extends SerializeResourceAction
 {
@@ -25,7 +27,7 @@ class UploadAction extends SerializeResourceAction
     /**
      * @inheritdoc
      */
-    public $serializer = 'Flarum\Api\Serializers\UserSerializer';
+    public $serializer = 'Flarum\Api\Serializers\Serializer';
 
     /**
      * @inheritdoc
@@ -66,8 +68,7 @@ class UploadAction extends SerializeResourceAction
     }
 
     /**
-     * Upload an avatar for a user, and return the user ready to be serialized
-     * and assigned to the JsonApi response.
+     *
      *
      * @param JsonApiRequest $request
      * @param Document $document
@@ -78,18 +79,37 @@ class UploadAction extends SerializeResourceAction
         // should be loaded from config
         $uploadDir = '/var/www/_futurebox/upload/';
 
+        // list of allowed filetypes (null if all are allowed)
+        $allowedTypes = null;
+
+        // list of blocked filetypes (null if none are blocked)
+        $blockedTypes = ['php', 'js', 'html', 'doc'];
+
+
+        //$response = new stdClass();
+
         $file = $request->http->getUploadedFiles()['file'];
         $id = $request->get('id');
         $user = $request->actor;
 
         // check if this type of file is allowed
+        $ext = explode('.', $file->getClientFilename());
+        $ext = strtolower(end($ext));
+        echo "ext: $ext";
+        if (($allowedTypes && !in_array($ext, $allowedTypes)) || ($blockedTypes && in_array($ext, $blockedTypes))) {
+            //$response->error = 'ERROR';
+            return new RuntimeException("my new error");
+        }
 
         // generate correct directory
 
         $file->moveTo($uploadDir.$file->getClientFilename());
 
+
+        $response  = "http://futurebox.tech/upload/".$file->getClientFilename();
+
         // send output (must be updated)
-        return "http://futurebox.tech/upload/".$file->getClientFilename();
+        return $response;
 
     }
 }

@@ -1,2 +1,4 @@
 fileupload:
-  # hello_world: "Hello, world!"
+  uploadfailed: 'File was not uploaded. Please refresh the page and try again.'
+  invalidtype: 'File was not uploaded becouse the type of file is not allowed.'
+  upladnewfile: 'Upload File'

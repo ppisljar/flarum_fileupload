@@ -23,7 +23,7 @@ var success = function(response) {
 var failure = function(response) {
     loading = false;
 
-    app.alertErrors([{detail: 'File was not uploaded. Please refresh the page and try again.'}]);
+    app.alertErrors([{detail: app.trans('fileupload.uploadfailed')}]);
 };
 
 var upload = function() {
@@ -53,10 +53,8 @@ var upload = function() {
     });
 };
 
-console.log("before start");
 
 extend(Composer.prototype, 'controlItems', function(oItems) {
-    console.log("running extend");
 
     oItems.add('uploadFile', ComposerButton.component({
         icon: 'upload',

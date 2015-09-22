@@ -6,10 +6,12 @@ adds upload button to composer, after clicking it you can select the file you wa
 
 TODO:
 - move button to more appropriate place (waiting till visual buttons are added to flarum core)
-- loading indication and nice notifications in case of failure
+- loading indication
 - add settings to backend (allowed file type / file size / folder )
 - use generated file name/directory structure
 
+- error notifications in case of failure [DONE]
+- make all texts translatable [DONE]
 
 
-
+- add s9e/TextFormatter parser, which will look for allowed file types and replace them with [image (based on filetype) + link]
