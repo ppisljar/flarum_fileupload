@@ -27,7 +27,7 @@ class UploadAction extends SerializeResourceAction
     /**
      * @inheritdoc
      */
-    public $serializer = 'Flarum\Api\Serializers\Serializer';
+    public $serializer = 'Flarum\Api\Serializers\UserSerializer';
 
     /**
      * @inheritdoc
@@ -85,9 +85,6 @@ class UploadAction extends SerializeResourceAction
         // list of blocked filetypes (null if none are blocked)
         $blockedTypes = ['php', 'js', 'html', 'doc'];
 
-
-        //$response = new stdClass();
-
         $file = $request->http->getUploadedFiles()['file'];
         $id = $request->get('id');
         $user = $request->actor;
@@ -95,18 +92,29 @@ class UploadAction extends SerializeResourceAction
         // check if this type of file is allowed
         $ext = explode('.', $file->getClientFilename());
         $ext = strtolower(end($ext));
-        echo "ext: $ext";
         if (($allowedTypes && !in_array($ext, $allowedTypes)) || ($blockedTypes && in_array($ext, $blockedTypes))) {
-            //$response->error = 'ERROR';
-            return new RuntimeException("my new error");
+            throw new RuntimeException("Filetype not allowed");
         }
 
         // generate correct directory
+        // unique id is generated then folder structure is build based on it
+        // upload/first_2_letters/second_2_letters/last_2_letters
+        // to avoid the need to save in database to preserve filename
+        $uid = uniqid();
+        $uid = array($uid[0].$uid[1], $uid[2].$uid[3], $uid[11].$uid[12]);
+        $currentPath = $uploadDir;
+        foreach ($uid as $dir) {
+            $currentPath .= "$dir/";
+            if (!is_dir($currentPath)) {
+                mkdir($currentPath);
+                chmod($currentPath, 775);
+            }
+        }
 
-        $file->moveTo($uploadDir.$file->getClientFilename());
+        $file->moveTo($currentPath.$file->getClientFilename());
 
-
-        $response  = "http://futurebox.tech/upload/".$file->getClientFilename();
+        $currentPath = str_replace($uploadDir, "", $currentPath);
+        $response  = "http://futurebox.tech/upload/".$currentPath.$file->getClientFilename();
 
         // send output (must be updated)
         return $response;
