@@ -1,6 +1,6 @@
 {
     "name": "fileupload",
-    "title": "fileupload",
+    "title": "File Upload",
     "description": "allows uploading files",
     "keywords": [
 
@@ -16,8 +16,8 @@
         "flarum": ">0.1.0-beta.2"
     },
     "icon": {
-        "name": "",
-        "backgroundColor": "",
-        "color": ""
+        "name": "upload",
+        "backgroundColor": "blue",
+        "color": "white"
     }
 }

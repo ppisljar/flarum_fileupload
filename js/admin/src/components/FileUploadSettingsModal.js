@@ -12,13 +12,13 @@ export default class FileUploadSettingsModal extends SettingsModal {
     form() {
         return [
             <div className="Form-group">
-                <label>File Upload</label>
-                <input className="FormControl" bidi={this.setting('hyn.fileupload.allowed')}/>
+                <label>Allowed filetypes (comma seperated, no spaces) </label>
+                <input className="FormControl" bidi={this.setting('flamure.fileupload.allowed')}/>
+
+                <label>Blocked filetypes (comma seperated, no spaces) </label>
+                <input className="FormControl" bidi={this.setting('flamure.fileupload.blocked')}/>
             </div>
-            <div className="Form-group">
-                <label>File Upload</label>
-                <input className="FormControl" bidi={this.setting('hyn.fileupload.blocked')}/>
-            </div>
+
         ];
     }
 }

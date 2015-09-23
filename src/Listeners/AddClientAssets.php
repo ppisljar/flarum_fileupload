@@ -37,7 +37,7 @@ class AddClientAssets
 
         $event->adminBootstrapper('fileupload/main');
 
-        $event->adminTranslations([
+        $event->forumTranslations([
             'fileupload.uploadfailed',
             'fileupload.invalidtype',
             'fileupload.uploadnewfile'
