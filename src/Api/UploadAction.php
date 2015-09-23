@@ -102,7 +102,7 @@ class UploadAction extends SerializeResourceAction
         $ext = explode('.', $file->getClientFilename());
         $ext = strtolower(end($ext));
         if ((sizeof($allowedTypes) > 0 && !in_array($ext, $allowedTypes)) || in_array($ext, $blockedTypes)) {
-            throw new Exception("Filetype not allowed");
+            throw new RuntimeException("Filetype not allowed");
         }
 
         // generate correct directory
@@ -113,6 +113,10 @@ class UploadAction extends SerializeResourceAction
         $uid = uniqid();
         $uid = array("_".$uid[0].$uid[1], "_".$uid[2].$uid[3], "_".$uid[11].$uid[12]);
         $currentPath = $uploadDir;
+        if (!is_dir($currentPath)) {
+            mkdir($currentPath, 0777, true);
+        }
+        
         foreach ($uid as $dir) {
             $currentPath .= "$dir/";
             if (!is_dir($currentPath)) {
