@@ -26,6 +26,8 @@ var failure = function(response) {
     loading = false;
 
     app.alertErrors([{detail: app.trans('fileupload.uploadfailed')}]);
+
+    return false;
 };
 
 var upload = function() {
@@ -60,7 +62,7 @@ extend(Composer.prototype, 'controlItems', function(oItems) {
 
     oItems.add('uploadFile', ComposerButton.component({
         icon: 'upload',
-        title: app.trans('fileupload.upladnewfile'),
+        title: app.trans('fileupload.uploadnewfile'),
         onclick: function() {
             upload();
         }

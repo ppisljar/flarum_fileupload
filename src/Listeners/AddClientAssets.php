@@ -26,7 +26,11 @@ class AddClientAssets
 
         $event->forumBootstrapper('fileupload/main');
 
-  
+        $event->forumTranslations([
+            'fileupload.uploadfailed',
+            'fileupload.invalidtype',
+            'fileupload.uploadnewfile'
+        ]);
 
         $event->adminAssets([
             __DIR__.'/../../js/admin/dist/extension.js',
@@ -35,11 +39,7 @@ class AddClientAssets
 
         $event->adminBootstrapper('fileupload/main');
 
-        $event->forumTranslations([
-            'fileupload.uploadfailed',
-            'fileupload.invalidtype',
-            'fileupload.uploadnewfile'
-        ]);
+        $event->adminTranslations([]);
     }
 
 

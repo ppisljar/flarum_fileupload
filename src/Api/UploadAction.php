@@ -85,10 +85,10 @@ class UploadAction extends SerializeResourceAction
         $uploadDir = '/upload/';
 
         // list of allowed filetypes (empty if all are allowed)
-        $allowedTypes = array_filter(explode(',', $this->settings->get('hyn.fileupload.allowed')));
+        $allowedTypes = array_filter(explode(',', $this->settings->get('flamure.fileupload.allowed')));
 
         // list of blocked filetypes (empty if none are blocked)
-        $blockedTypes = array_filter(explode(',', $this->settings->get('hyn.fileupload.blocked')));
+        $blockedTypes = array_filter(explode(',', $this->settings->get('flamure.fileupload.blocked')));
 
         // end of config
 
@@ -102,7 +102,7 @@ class UploadAction extends SerializeResourceAction
         $ext = explode('.', $file->getClientFilename());
         $ext = strtolower(end($ext));
         if ((sizeof($allowedTypes) > 0 && !in_array($ext, $allowedTypes)) || in_array($ext, $blockedTypes)) {
-            throw new RuntimeException("Filetype not allowed");
+            throw new Exception("Filetype not allowed");
         }
 
         // generate correct directory
@@ -120,13 +120,17 @@ class UploadAction extends SerializeResourceAction
             }
         }
 
-        $file->moveTo($currentPath.$file->getClientFilename());
+        try {
+            $file->moveTo($currentPath.$file->getClientFilename());
+            $currentPath = str_replace($uploadDir, "", $currentPath);
+            $response  = "/upload/".$currentPath.$file->getClientFilename();
 
-        $currentPath = str_replace($uploadDir, "", $currentPath);
-        $response  = "/upload/".$currentPath.$file->getClientFilename();
+            // send output (must be updated)
+            return $response;
+        } catch (Exception $e) {
+            throw new RuntimeException("Upload failed");
+        }
 
-        // send output (must be updated)
-        return $response;
 
     }
 }
