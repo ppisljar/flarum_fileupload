@@ -16,6 +16,7 @@ use Illuminate\Contracts\Bus\Dispatcher;
 use League\Flysystem\Exception;
 use Tobscure\JsonApi\Document;
 use RuntimeException;
+use Flarum\Core\Settings\SettingsRepository;
 
 class UploadAction extends SerializeResourceAction
 {
@@ -59,12 +60,14 @@ class UploadAction extends SerializeResourceAction
      */
     public $sort;
 
+    protected $settings;
     /**
      * @param Dispatcher $bus
      */
-    public function __construct(Dispatcher $bus)
+    public function __construct(Dispatcher $bus, SettingsRepository $settings)
     {
         $this->bus = $bus;
+        $this->settings = $settings;
     }
 
     /**
@@ -76,14 +79,16 @@ class UploadAction extends SerializeResourceAction
      */
     protected function data(JsonApiRequest $request, Document $document)
     {
+        // TODO: update settings namespace
+
         // should be loaded from config ... upload folder relative to the flarum base path
         $uploadDir = '/upload/';
 
-        // list of allowed filetypes (null if all are allowed)
-        $allowedTypes = null;
+        // list of allowed filetypes (empty if all are allowed)
+        $allowedTypes = array_filter(explode(',', $this->settings->get('hyn.fileupload.allowed')));
 
-        // list of blocked filetypes (null if none are blocked)
-        $blockedTypes = ['php', 'js', 'html', 'doc'];
+        // list of blocked filetypes (empty if none are blocked)
+        $blockedTypes = array_filter(explode(',', $this->settings->get('hyn.fileupload.blocked')));
 
         // end of config
 
@@ -96,7 +101,7 @@ class UploadAction extends SerializeResourceAction
         // check if this type of file is allowed
         $ext = explode('.', $file->getClientFilename());
         $ext = strtolower(end($ext));
-        if (($allowedTypes && !in_array($ext, $allowedTypes)) || ($blockedTypes && in_array($ext, $blockedTypes))) {
+        if ((sizeof($allowedTypes) > 0 && !in_array($ext, $allowedTypes)) || in_array($ext, $blockedTypes)) {
             throw new RuntimeException("Filetype not allowed");
         }
 
