@@ -26,9 +26,7 @@ class AddClientAssets
 
         $event->forumBootstrapper('fileupload/main');
 
-        $event->forumTranslations([
-            // 'fileupload.hello_world'
-        ]);
+  
 
         $event->adminAssets([
             __DIR__.'/../../js/admin/dist/extension.js',
