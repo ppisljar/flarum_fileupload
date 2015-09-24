@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 /*
  * This file is part of Flarum.
  *
@@ -11,14 +12,11 @@
 namespace fileupload\Listeners;
 
 use Flarum\Events\RegisterApiRoutes;
-use Flarum\Api\Actions\Forum;
-use Flarum\Api\Actions\Discussions;
 
 class AddApiAttributes
 {
     public function subscribe($events)
     {
-
         $events->listen(RegisterApiRoutes::class, [$this, 'addRoutes']);
     }
 

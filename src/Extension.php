@@ -1,4 +1,6 @@
-<?php namespace fileupload;
+<?php
+
+namespace fileupload;
 
 use Flarum\Support\Extension as BaseExtension;
 use Illuminate\Events\Dispatcher;

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Flarum.
  *
@@ -12,11 +13,11 @@ namespace fileupload\Api;
 
 use Flarum\Api\Actions\SerializeResourceAction;
 use Flarum\Api\JsonApiRequest;
+use Flarum\Core\Settings\SettingsRepository;
 use Illuminate\Contracts\Bus\Dispatcher;
 use League\Flysystem\Exception;
-use Tobscure\JsonApi\Document;
 use RuntimeException;
-use Flarum\Core\Settings\SettingsRepository;
+use Tobscure\JsonApi\Document;
 
 class UploadAction extends SerializeResourceAction
 {
@@ -26,41 +27,42 @@ class UploadAction extends SerializeResourceAction
     protected $bus;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public $serializer = 'Flarum\Api\Serializers\UserSerializer';
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public $include = [];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public $link = [];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public $limitMax = 50;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public $limit = 20;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public $sortFields = [];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public $sort;
 
     protected $settings;
+
     /**
      * @param Dispatcher $bus
      */
@@ -71,10 +73,9 @@ class UploadAction extends SerializeResourceAction
     }
 
     /**
-     *
-     *
      * @param JsonApiRequest $request
-     * @param Document $document
+     * @param Document       $document
+     *
      * @return \Flarum\Core\Users\User
      */
     protected function data(JsonApiRequest $request, Document $document)
@@ -92,7 +93,7 @@ class UploadAction extends SerializeResourceAction
 
         // end of config
 
-        $uploadDir = getcwd() . $uploadDir;
+        $uploadDir = getcwd().$uploadDir;
 
         $file = $request->http->getUploadedFiles()['file'];
         $id = $request->get('id');
@@ -101,8 +102,8 @@ class UploadAction extends SerializeResourceAction
         // check if this type of file is allowed
         $ext = explode('.', $file->getClientFilename());
         $ext = strtolower(end($ext));
-        if ((sizeof($allowedTypes) > 0 && !in_array($ext, $allowedTypes)) || in_array($ext, $blockedTypes)) {
-            throw new RuntimeException("Filetype not allowed");
+        if ((count($allowedTypes) > 0 && !in_array($ext, $allowedTypes)) || in_array($ext, $blockedTypes)) {
+            throw new RuntimeException('Filetype not allowed');
         }
 
         // generate correct directory
@@ -111,12 +112,12 @@ class UploadAction extends SerializeResourceAction
         // to avoid the need to save in database to preserve filename
         // add _ to begining to make sure its valid folder name
         $uid = uniqid();
-        $uid = array("_".$uid[0].$uid[1], "_".$uid[2].$uid[3], "_".$uid[11].$uid[12]);
+        $uid = ['_'.$uid[0].$uid[1], '_'.$uid[2].$uid[3], '_'.$uid[11].$uid[12]];
         $currentPath = $uploadDir;
         if (!is_dir($currentPath)) {
             mkdir($currentPath, 0777, true);
         }
-        
+
         foreach ($uid as $dir) {
             $currentPath .= "$dir/";
             if (!is_dir($currentPath)) {
@@ -126,15 +127,13 @@ class UploadAction extends SerializeResourceAction
 
         try {
             $file->moveTo($currentPath.$file->getClientFilename());
-            $currentPath = str_replace($uploadDir, "", $currentPath);
-            $response  = "/upload/".$currentPath.$file->getClientFilename();
+            $currentPath = str_replace($uploadDir, '', $currentPath);
+            $response = '/upload/'.$currentPath.$file->getClientFilename();
 
             // send output (must be updated)
             return $response;
         } catch (Exception $e) {
-            throw new RuntimeException("Upload failed");
+            throw new RuntimeException('Upload failed');
         }
-
-
     }
 }
