@@ -1,7 +1,9 @@
-<?php namespace fileupload\Listeners;
+<?php
 
-use Flarum\Events\RegisterLocales;
+namespace fileupload\Listeners;
+
 use Flarum\Events\BuildClientView;
+use Flarum\Events\RegisterLocales;
 use Illuminate\Contracts\Events\Dispatcher;
 
 class AddClientAssets
@@ -21,7 +23,7 @@ class AddClientAssets
     {
         $event->forumAssets([
             __DIR__.'/../../js/forum/dist/extension.js',
-            __DIR__.'/../../less/forum/extension.less'
+            __DIR__.'/../../less/forum/extension.less',
         ]);
 
         $event->forumBootstrapper('fileupload/main');
@@ -29,18 +31,16 @@ class AddClientAssets
         $event->forumTranslations([
             'fileupload.uploadfailed',
             'fileupload.invalidtype',
-            'fileupload.uploadnewfile'
+            'fileupload.uploadnewfile',
         ]);
 
         $event->adminAssets([
             __DIR__.'/../../js/admin/dist/extension.js',
-            __DIR__.'/../../less/admin/extension.less'
+            __DIR__.'/../../less/admin/extension.less',
         ]);
 
         $event->adminBootstrapper('fileupload/main');
 
         $event->adminTranslations([]);
     }
-
-
 }
